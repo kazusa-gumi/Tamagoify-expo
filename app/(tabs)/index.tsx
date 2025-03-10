@@ -148,7 +148,7 @@ export default function HomeScreen() {
             bordered
             elevate
             backgroundColor="#ffffff20"
-            borderColor="#ffffff20"
+            borderColor="#ffffff"
             borderRadius="$6"
           >
             <Text
