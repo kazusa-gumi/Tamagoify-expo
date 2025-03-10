@@ -9,13 +9,17 @@ import { Button, YStack } from "tamagui";
 import { ThemedView } from "@/components/ThemedView";
 
 export const fetchEncouragement = async () => {
+  if (!process.env.EXPO_PUBLIC_API_KEY || !process.env.EXPO_PUBLIC_API_KEY) {
+    console.error("APIキーが設定されていません。");
+    return null;
+  }
   try {
     const response = await axios.post(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.EXPO_PUBLIC_API_KEY}`,
+      `${process.env.EXPO_PUBLIC_GEMINI_API_URL}?key=${process.env.EXPO_PUBLIC_API_KEY}`,
       {
         contents: [
           {
-            parts: [{ text: "短めの励ましの言葉をください。" }],
+            parts: [{ text: "短い励ましの言葉をください。" }],
           },
         ],
       },
@@ -26,7 +30,10 @@ export const fetchEncouragement = async () => {
       }
     );
     const encouragementText = response.data.candidates[0]?.content;
-    console.log(encouragementText.parts[0].text);
+    if (!encouragementText) {
+      console.error("Unexpected API response format:", response.data);
+      return null;
+    }
     return encouragementText.parts[0].text;
   } catch (error) {
     console.error("APIリクエストエラー:", error);
