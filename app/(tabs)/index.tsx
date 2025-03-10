@@ -1,14 +1,21 @@
 import { Image, StyleSheet, Platform, View } from "react-native";
+
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-
-import { HelloWave } from "@/components/HelloWave";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { Button, YStack } from "tamagui";
-import { ThemedView } from "@/components/ThemedView";
-import { Theme } from "tamagui";
+import {
+  Button,
+  YStack,
+  XStack,
+  Card,
+  Text,
+  Theme,
+  Circle,
+  AnimatePresence,
+  H2,
+  useTheme,
+} from "tamagui";
 import { LinearGradient } from "tamagui/linear-gradient";
+import { Heart, MessageCircle, RefreshCw } from "@tamagui/lucide-icons";
 
 export const fetchEncouragement = async () => {
   if (!process.env.EXPO_PUBLIC_API_KEY || !process.env.EXPO_PUBLIC_API_KEY) {
@@ -49,29 +56,82 @@ export const fetchEncouragement = async () => {
 
 export default function HomeScreen() {
   const [encouragement, setEncouragement] = useState<string | undefined>("");
+  const [mood, setMood] = useState("normal"); // normal, happy, excited
+  const [happiness, setHappiness] = useState(70);
+  const theme = useTheme();
+
+  const getNewEncouragement = async () => {
+    const text = await fetchEncouragement();
+    if (text) {
+      setEncouragement(text);
+      setMood("happy");
+      setHappiness((prev) => Math.min(prev + 10, 100));
+      // 3秒後に通常の表情に戻す
+      setTimeout(() => setMood("normal"), 3000);
+    }
+  };
 
   useEffect(() => {
-    const getEncouragement = async () => {
-      const text = await fetchEncouragement();
-      if (text) {
-        setEncouragement(text);
-      }
-    };
-    getEncouragement();
+    getNewEncouragement();
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.content}>
-        <Image
-          source={require("@/assets/images/neko.png")}
-          style={styles.reactLogo}
-        />
-        <ThemedText type="title" style={styles.encouragementText}>
-          {encouragement}
-        </ThemedText>
-      </View>
-    </View>
+    <Theme name="pink">
+      <YStack f={1} padding="$4" space>
+        <YStack
+          position="absolute"
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}
+          zIndex={-1}
+        >
+          <LinearGradient
+            colors={["#f8bbd0", "#f48fb1"]}
+            start={[0, 0]}
+            end={[0, 1]}
+            fullscreen
+          />
+        </YStack>
+
+        {/* ステータスバー */}
+        <Card bordered elevate padding="$2" marginTop="$4">
+          <XStack alignItems="center" space>
+            <Heart color={happiness > 50 ? "$red10" : "$gray8"} size={18} />
+            <Text fontSize="$3">きもち: {happiness}%</Text>
+          </XStack>
+        </Card>
+
+        {/* キャラクターセクション */}
+        <YStack flex={1} justifyContent="center" alignItems="center">
+          <AnimatePresence>
+            <Circle
+              size={280}
+              backgroundColor="#edb5d2"
+              bordered
+              borderColor="#c8a8da"
+              shadowColor="#c8a8da"
+              shadowRadius={5}
+              shadowOffset={{ width: 0, height: 3 }}
+              marginBottom={20}
+            >
+              <Image
+                source={require("@/assets/images/neko.png")}
+                style={{ width: 200, height: 120 }}
+              />
+            </Circle>
+          </AnimatePresence>
+          <Text
+            fontSize="$5"
+            textAlign="center"
+            fontWeight="bold"
+            color="#ffffff"
+          >
+            {encouragement || "こんにちは！"}
+          </Text>
+        </YStack>
+      </YStack>
+    </Theme>
   );
 }
 
@@ -92,6 +152,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   encouragementText: {
-    color: "#2c3e50", // ダークブルー
+    color: "#ffffff",
+    flexWrap: "wrap",
+    maxWidth: 300,
   },
 });
