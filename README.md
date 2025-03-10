@@ -2,6 +2,7 @@
 オンボーディング画面 <br />
 push通知機能 <br />
 文章読み上げ <br />
+適切な箇所での改行 <br />
 
 # Welcome to your Expo app 👋
 
