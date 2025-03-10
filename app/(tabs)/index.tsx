@@ -15,7 +15,7 @@ export const fetchEncouragement = async () => {
       {
         contents: [
           {
-            parts: [{ text: "励ましの言葉をください" }],
+            parts: [{ text: "短めの励ましの言葉をください。" }],
           },
         ],
       },
@@ -26,9 +26,8 @@ export const fetchEncouragement = async () => {
       }
     );
     const encouragementText = response.data.candidates[0]?.content;
-    console.log(encouragementText);
-    console.log("APIレスポンス:", response.data);
-    return response.data;
+    console.log(encouragementText.parts[0].text);
+    return encouragementText.parts[0].text;
   } catch (error) {
     console.error("APIリクエストエラー:", error);
     return null;
@@ -36,13 +35,13 @@ export const fetchEncouragement = async () => {
 };
 
 export default function HomeScreen() {
-  const [encouragement, setEncouragement] = useState<string | null>(null);
+  const [encouragement, setEncouragement] = useState<string | undefined>("");
 
   useEffect(() => {
     const getEncouragement = async () => {
-      const data = await fetchEncouragement();
-      if (data) {
-        setEncouragement(data.generated_content);
+      const text = await fetchEncouragement();
+      if (text) {
+        setEncouragement(text);
       }
     };
     getEncouragement();
