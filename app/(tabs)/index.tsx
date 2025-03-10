@@ -160,17 +160,6 @@ export default function HomeScreen() {
               {encouragement || "こんにちは！"}
             </Text>
           </Card>
-          <Button
-            marginTop="$4"
-            size="$4"
-            theme="pink"
-            backgroundColor="$pink8"
-            color="white"
-            onPress={getNewEncouragement}
-            icon={<MessageCircle />}
-          >
-            新しい励ましを取得
-          </Button>
         </YStack>
       </YStack>
     </Theme>
