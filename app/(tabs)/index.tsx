@@ -17,6 +17,19 @@ import {
 import { LinearGradient } from "tamagui/linear-gradient";
 import { Heart, MessageCircle, RefreshCw } from "@tamagui/lucide-icons";
 
+const encouragementPrompts = [
+  "今日一日を乗り切るための短い励ましの言葉をください。20文字以内で。",
+  "友達を元気づける言葉を教えてください。20文字以内で。",
+  "勉強や仕事で疲れた人向けの応援メッセージを20文字以内でください。",
+  "落ち込んでいる人に送る前向きな言葉を20文字以内でください。",
+  "今日のポジティブな一言を20文字以内でください。",
+];
+
+const randomPrompt =
+  encouragementPrompts[Math.floor(Math.random() * encouragementPrompts.length)];
+
+console.log(randomPrompt);
+
 export const fetchEncouragement = async () => {
   if (!process.env.EXPO_PUBLIC_API_KEY || !process.env.EXPO_PUBLIC_API_KEY) {
     console.error("APIキーが設定されていません。");
@@ -30,11 +43,18 @@ export const fetchEncouragement = async () => {
           {
             parts: [
               {
-                text: "アプリでユーザーに表示する励ましの言葉をください。20文字以内で。アプリに表示できないので、あなたの返答１つだけをテキストだけで表示してください",
+                text:
+                  randomPrompt +
+                  " アプリに表示できないので、あなたの返答１つだけをテキストだけで表示してください",
               },
             ],
           },
         ],
+        generation_config: {
+          temperature: 0.9,
+          top_p: 0.8,
+          top_k: 40,
+        },
       },
       {
         headers: {
@@ -42,6 +62,7 @@ export const fetchEncouragement = async () => {
         },
       }
     );
+
     const encouragementText = response.data.candidates[0]?.content;
     if (!encouragementText) {
       console.error("Unexpected API response format:", response.data);
@@ -121,14 +142,24 @@ export default function HomeScreen() {
               />
             </Circle>
           </AnimatePresence>
-          <Text
-            fontSize="$5"
-            textAlign="center"
-            fontWeight="bold"
-            color="#ffffff"
+          <Card
+            marginTop="$2"
+            padding="$4"
+            bordered
+            elevate
+            backgroundColor="#ffffff20"
+            borderColor="#ffffff20"
+            borderRadius="$6"
           >
-            {encouragement || "こんにちは！"}
-          </Text>
+            <Text
+              fontSize="$5"
+              textAlign="center"
+              fontWeight="bold"
+              color="#ffffff"
+            >
+              {encouragement || "こんにちは！"}
+            </Text>
+          </Card>
         </YStack>
       </YStack>
     </Theme>
