@@ -87,7 +87,6 @@ export default function HomeScreen() {
       setEncouragement(text);
       setMood("happy");
       setHappiness((prev) => Math.min(prev + 10, 100));
-      // 3秒後に通常の表情に戻す
       setTimeout(() => setMood("normal"), 3000);
     }
   };
